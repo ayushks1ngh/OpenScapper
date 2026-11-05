@@ -3,7 +3,7 @@
 import re
 from typing import Any, Dict, List, Optional
 
-FIELDS = ('username', 'full_name', 'bio', 'email', 'follower_count',
+FIELDS = ('username', 'full_name', 'bio', 'email', 'phone', 'follower_count',
           'website', 'links', 'platform', 'profile_url')
 
 _EMAIL = re.compile(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
@@ -39,6 +39,7 @@ def normalize(raw: Optional[Dict[str, Any]], platform: str = '') -> Dict[str, An
         'full_name': _clean_str(raw.get('full_name')),
         'bio': _clean_str(raw.get('bio')),
         'email': _clean_str(raw.get('email')).lower(),
+        'phone': _clean_str(raw.get('phone')),
         'follower_count': _clean_int(raw.get('follower_count')),
         'website': _clean_str(raw.get('website')),
         'links': links,
