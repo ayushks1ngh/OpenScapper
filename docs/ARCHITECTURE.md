@@ -30,6 +30,11 @@ Principles:
 - One lead schema shared by all scrapers and the exporter.
 - `scout.py` shrinks to UI only; logic moves into `app/`.
 
+## Phase 3-4 modules
+- `app/lead/`: `detect.py` (URL -> platform/account), `any_url.py` (`lead_from_url`)
+- `app/prospect/`: `query.py` (text -> SearchPlan), `discover.py` (search-engine profile discovery), `pipeline.py` (scrape -> enrich -> filter -> dedupe -> score -> rank -> CSV)
+- `app/quality/`: `identity.py` (same-person evidence, noisy-or, threshold 0.8), `merge.py` (clusters + merged lead), `scoring.py` (0-100 with reasons)
+
 ## Open design questions
 - Where the selector cache lives (SQLite vs JSON) -> D-003
 - How discovery finds candidates without official search APIs -> Phase 3

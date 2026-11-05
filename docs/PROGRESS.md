@@ -3,6 +3,8 @@
 Newest first. One entry per work session: what changed, what's next, blockers.
 
 ## 2026-11-05
+- **Phase 4 complete.** Identity matching, merge, explainable scoring, wired into `find`. Eval on 30 hand-written pairs: precision 1.00, recall 0.86 (two misses are accepted weak-evidence cases). 146 tests.
+- **Next:** Phase 5 (config, rate limiting, logging, packaging, release).
 - Phase 3 built: `app/prospect/` (query, discover, pipeline), CLI `find "<query>" [--limit N]` and menu 15. 116 tests. **No live run yet** (sandbox has no network/browser), so the Phase 3 exit criterion stays open.
 - Fixed a thread race in pipeline stats (counters now locked).
 - Phase 2 built: `app/lead/` (detect, any_url), CLI `lead <url>` + menu 14, `phone` in schema. 92 tests. **Not yet verified against live sites** (no network checks run), so the Phase 2 exit criterion stays open.

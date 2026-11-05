@@ -40,12 +40,12 @@ Goal: a scraper that survives layout changes.
 - [x] Pipeline: discover -> scrape -> enrich -> rank -> export (`pipeline.py`, CLI `find "<query>"`, menu 15)
 **Exit:** "yoga studio owners in Austin" returns a ranked CSV end to end. (Logic is unit tested with fakes; needs a live run on a networked machine. Search engines may rate-limit; discovery is pluggable.)
 
-## Phase 4: Lead quality
-- [ ] Cross-platform identity matching (same person on multiple sites)
-- [ ] Dedupe and merge
-- [ ] Scoring model v2 (email verification, source agreement, completeness, recency)
-- [ ] Explainable score (why this lead got 82%)
-**Exit:** measured precision on a hand-labelled sample set.
+## Phase 4: Lead quality ✅ done 2026-11-05
+- [x] Cross-platform identity matching (`app/quality/identity.py`, noisy-or evidence with reasons)
+- [x] Dedupe and merge (`merge.py`; wired into the prospecting pipeline)
+- [x] Scoring model v2 (`scoring.py`: email, phone, audience, cross-platform presence, profile, business signal). Recency not included: we do not collect post dates yet
+- [x] Explainable score (`score_explain` column in CSV)
+**Exit:** measured precision on a hand-labelled sample set. Met on a 30-pair set: precision 1.00, recall 0.86 (`tests/test_quality_identity_eval.py`). Caveat: pairs were written by us, so this guards regressions but is not real-world accuracy; grow the set from real runs.
 
 ## Phase 5: Production hardening
 - [ ] Config system (single settings file, env overrides)
