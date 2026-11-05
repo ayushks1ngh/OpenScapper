@@ -1,0 +1,465 @@
+[
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "janedoe",
+   "full_name": "Jane Doe",
+   "email": "jane@acme.io"
+  },
+  "b": {
+   "platform": "youtube",
+   "username": "jane_channel",
+   "full_name": "Jane D",
+   "email": "jane@acme.io"
+  },
+  "same": true,
+  "note": "shared personal email"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "mikefit",
+   "full_name": "Mike Ross",
+   "phone": "+1 555 201 3344"
+  },
+  "b": {
+   "platform": "tiktok",
+   "username": "mike_trains",
+   "full_name": "M Ross",
+   "phone": "(555) 201-3344"
+  },
+  "same": true,
+  "note": "shared phone, different format"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "sarahbakes",
+   "full_name": "Sarah L",
+   "links": [
+    "https://www.youtube.com/@SarahBakesDaily"
+   ]
+  },
+  "b": {
+   "platform": "youtube",
+   "username": "SarahBakesDaily",
+   "full_name": "Sarah Lindqvist"
+  },
+  "same": true,
+  "note": "bio links to the other profile"
+ },
+ {
+  "a": {
+   "platform": "tiktok",
+   "username": "coachpria",
+   "full_name": "Priya Nair",
+   "website": "https://priyanair.co"
+  },
+  "b": {
+   "platform": "instagram",
+   "username": "coachpria",
+   "full_name": "Priya Nair",
+   "website": "https://www.priyanair.co/"
+  },
+  "same": true,
+  "note": "same username, name and site"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "chefmarco",
+   "full_name": "Marco Bianchi"
+  },
+  "b": {
+   "platform": "tiktok",
+   "username": "chef.marco",
+   "full_name": "Marco Bianchi"
+  },
+  "same": true,
+  "note": "username differs by a dot, same name"
+ },
+ {
+  "a": {
+   "platform": "github",
+   "username": "devanna",
+   "full_name": "Anna Kowalski",
+   "website": "https://annakowalski.dev"
+  },
+  "b": {
+   "platform": "twitch",
+   "username": "dev_anna",
+   "full_name": "Anna Kowalski",
+   "website": "https://annakowalski.dev"
+  },
+  "same": true,
+  "note": "same site, near-same username, same name"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "lunayoga",
+   "full_name": "Luna Park",
+   "socials": {
+    "youtube": "https://youtube.com/@lunayogastudio"
+   }
+  },
+  "b": {
+   "platform": "youtube",
+   "username": "lunayogastudio",
+   "full_name": "Luna Yoga Studio"
+  },
+  "same": true,
+  "note": "socials map points at the other"
+ },
+ {
+  "a": {
+   "platform": "pinterest",
+   "username": "homebyellie",
+   "full_name": "Ellie Grant",
+   "email": "ellie@homebyellie.com"
+  },
+  "b": {
+   "platform": "instagram",
+   "username": "homebyellie",
+   "full_name": "Ellie Grant",
+   "email": "ellie@homebyellie.com"
+  },
+  "same": true,
+  "note": "identical everything"
+ },
+ {
+  "a": {
+   "platform": "youtube",
+   "username": "TomGuitar",
+   "full_name": "Tom Ek",
+   "phone": "555-777-0101"
+  },
+  "b": {
+   "platform": "instagram",
+   "username": "tomplaysguitar",
+   "full_name": "Tom Ek",
+   "phone": "+1 (555) 777-0101"
+  },
+  "same": true,
+  "note": "phone match despite different usernames"
+ },
+ {
+  "a": {
+   "platform": "linkedin",
+   "username": "jordan-reyes",
+   "full_name": "Jordan Reyes",
+   "email": "jordan@reyes.io"
+  },
+  "b": {
+   "platform": "github",
+   "username": "jreyes",
+   "full_name": "Jordan Reyes",
+   "email": "jordan@reyes.io"
+  },
+  "same": true,
+  "note": "same email"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "photobydani",
+   "full_name": "Dani Cruz",
+   "links": [
+    "https://www.tiktok.com/@photobydani"
+   ]
+  },
+  "b": {
+   "platform": "tiktok",
+   "username": "photobydani",
+   "full_name": "Dani Cruz"
+  },
+  "same": true,
+  "note": "link plus same username"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "zoe.creates",
+   "full_name": "Zoe Hart",
+   "website": "https://zoehart.art"
+  },
+  "b": {
+   "platform": "tiktok",
+   "username": "zoecreates",
+   "full_name": "Zoe Hart",
+   "website": "https://zoehart.art"
+  },
+  "same": true,
+  "note": "dot-insensitive username and same site"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "ana_s",
+   "full_name": "Ana Silva"
+  },
+  "b": {
+   "platform": "youtube",
+   "username": "anasilvatv",
+   "full_name": "Ana Silva"
+  },
+  "same": true,
+  "note": "only the name matches (not enough evidence by design)"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "bk_barber",
+   "full_name": "Ben K"
+  },
+  "b": {
+   "platform": "tiktok",
+   "username": "benthebarber",
+   "full_name": "Benjamin Kline"
+  },
+  "same": true,
+  "note": "nothing machine-checkable in common"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "johnsmith",
+   "full_name": "John Smith"
+  },
+  "b": {
+   "platform": "tiktok",
+   "username": "johnsmith88",
+   "full_name": "John Smith"
+  },
+  "same": false,
+  "note": "common name, similar-looking usernames, different people"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "john",
+   "full_name": "John"
+  },
+  "b": {
+   "platform": "tiktok",
+   "username": "john",
+   "full_name": "John"
+  },
+  "same": false,
+  "note": "short common username"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "acmeteam_amy",
+   "full_name": "Amy Wu",
+   "website": "https://acme.io"
+  },
+  "b": {
+   "platform": "instagram",
+   "username": "acmeteam_raj",
+   "full_name": "Raj Patel",
+   "website": "https://acme.io"
+  },
+  "same": false,
+  "note": "two colleagues, same company site"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "acme",
+   "full_name": "Acme Studio",
+   "email": "info@acme.io"
+  },
+  "b": {
+   "platform": "tiktok",
+   "username": "acmefans",
+   "full_name": "Acme Fan Club",
+   "email": "info@acme.io"
+  },
+  "same": false,
+  "note": "shared generic inbox only"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "mariagarcia",
+   "full_name": "Maria Garcia"
+  },
+  "b": {
+   "platform": "tiktok",
+   "username": "maria.garcia.fit",
+   "full_name": "Maria Garcia"
+  },
+  "same": false,
+  "note": "common name, different usernames"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "sam",
+   "full_name": "Sam",
+   "website": "https://linktr.ee/sam"
+  },
+  "b": {
+   "platform": "tiktok",
+   "username": "samm",
+   "full_name": "Sam",
+   "website": "https://linktr.ee/sam"
+  },
+  "same": false,
+  "note": "link aggregator is not identity"
+ },
+ {
+  "a": {
+   "platform": "github",
+   "username": "alexchen",
+   "full_name": "Alex Chen",
+   "website": "https://gmail.com"
+  },
+  "b": {
+   "platform": "twitch",
+   "username": "alexchen_tv",
+   "full_name": "Alex Chen",
+   "website": "https://gmail.com"
+  },
+  "same": false,
+  "note": "mail provider site is not identity"
+ },
+ {
+  "a": {
+   "platform": "youtube",
+   "username": "fitnesswithkim",
+   "full_name": "Kim Lee"
+  },
+  "b": {
+   "platform": "youtube",
+   "username": "fitnesswithkimmy",
+   "full_name": "Kimmy Lo"
+  },
+  "same": false,
+  "note": "similar usernames, different names"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "travelwithtom",
+   "full_name": "Tom Hale"
+  },
+  "b": {
+   "platform": "youtube",
+   "username": "travelwithtim",
+   "full_name": "Tim Hall"
+  },
+  "same": false,
+  "note": "similar usernames, different names"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "bakerysoleil",
+   "full_name": "Soleil Bakery",
+   "phone": "555-100-2000"
+  },
+  "b": {
+   "platform": "instagram",
+   "username": "bakerysunny",
+   "full_name": "Sunny Bakery",
+   "phone": "555-300-4000"
+  },
+  "same": false,
+  "note": "different phones"
+ },
+ {
+  "a": {
+   "platform": "tiktok",
+   "username": "dancerlily",
+   "full_name": "Lily Fox"
+  },
+  "b": {
+   "platform": "instagram",
+   "username": "dancerlily",
+   "full_name": "Lily Foster"
+  },
+  "same": false,
+  "note": "same username, different surnames and nothing else"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "coach_dave",
+   "full_name": "Dave Brown",
+   "website": "https://dbcoaching.com"
+  },
+  "b": {
+   "platform": "instagram",
+   "username": "coach_dave2",
+   "full_name": "Dave Black",
+   "website": "https://davidblackcoaching.com"
+  },
+  "same": false,
+  "note": "different sites and names"
+ },
+ {
+  "a": {
+   "platform": "github",
+   "username": "sarahdev",
+   "full_name": "Sarah Dev",
+   "email": "sarah@a.io"
+  },
+  "b": {
+   "platform": "github",
+   "username": "sarahdev2",
+   "full_name": "Sarah Devlin",
+   "email": "sarah@b.io"
+  },
+  "same": false,
+  "note": "different emails"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "pizzaplace",
+   "full_name": "Pizza Place",
+   "website": "https://pizzaplace.com"
+  },
+  "b": {
+   "platform": "tiktok",
+   "username": "pizzaplace_nyc",
+   "full_name": "Pizza Place NYC",
+   "website": "https://pizzaplace-nyc.com"
+  },
+  "same": false,
+  "note": "different restaurants"
+ },
+ {
+  "a": {
+   "platform": "instagram",
+   "username": "ryan",
+   "full_name": "Ryan Park"
+  },
+  "b": {
+   "platform": "instagram",
+   "username": "ryanp",
+   "full_name": "Ryan Park"
+  },
+  "same": false,
+  "note": "short usernames, common name"
+ },
+ {
+  "a": {
+   "platform": "tiktok",
+   "username": "nailsbyjen",
+   "full_name": "Jen R",
+   "phone": "555-222-3333"
+  },
+  "b": {
+   "platform": "tiktok",
+   "username": "nailsbyjenny",
+   "full_name": "Jenny T",
+   "phone": "555-222-4444"
+  },
+  "same": false,
+  "note": "phones differ in the last digits"
+ }
+]
