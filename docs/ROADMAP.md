@@ -52,7 +52,7 @@ Goal: a scraper that survives layout changes.
 - [x] Rate limiting + retries (`app/ratelimit.py`: per-host throttle, jittered backoff on 429/5xx). Proxy rotation unchanged (random pick per request)
 - [x] Logging: rotating file at `~/.openscrapper/logs/`, JSON lines option (`OPENSCRAPPER_LOG_JSON`), secrets redacted (`app/logsetup.py`)
 - [x] Packaging: `pyproject.toml`, `openscrapper` console script, extras `browser`/`ai`/`dev`; verified in a clean venv. Versioned releases: pending your decision on the version number (see PROGRESS)
-- [ ] Docs site / usage guide
+- [x] Usage guide (`docs/USAGE.md`); no separate docs site planned
 **Exit:** fresh machine install to first CSV in under 5 minutes; tagged v1.0.
 
 ## Later (unscheduled)

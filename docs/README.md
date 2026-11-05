@@ -4,6 +4,7 @@ These files are the living plan. Update them as we build; they are the source of
 
 | File | Purpose | Update when |
 |---|---|---|
+| [USAGE.md](USAGE.md) | How to install and use it | Behaviour or settings change |
 | [VISION.md](VISION.md) | What we're building, for whom, and what makes it different | Direction changes |
 | [ROADMAP.md](ROADMAP.md) | Phases, tasks, status checkboxes, exit criteria | Every task starts/finishes |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | How the pieces fit; target design vs. current code | Design changes or modules land |

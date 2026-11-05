@@ -132,9 +132,9 @@ No paid API required. Optional Hunter.io support for additional coverage.
 - Fetching and anti-bot handling: [Scrapling](https://github.com/D4Vinci/Scrapling) by D4Vinci.
 - Optional AI-based extraction: [ScrapeGraphAI](https://github.com/ScrapeGraphAI/Scrapegraph-ai).
 
-## Project plan
+## Docs
 
-Roadmap, architecture and decision log live in [`docs/`](docs/README.md).
+[Usage guide](docs/USAGE.md). Roadmap, architecture and decision log live in [`docs/`](docs/README.md).
 
 ## License
 
