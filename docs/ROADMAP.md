@@ -15,7 +15,7 @@ Goal: clean base, honest attribution, tests to build on.
 - [x] HTML scrapers on `fetch()` (instagram, tiktok, pinterest, youtube, linktree). github/twitch/linkedin stay on their API clients (D-006)
 **Exit:** all HTML-based platforms fetch via `fetch()`; tests green in CI; no references to the old name/update URL.
 
-## Phase 1: Self-healing scrapers (flagship)
+## Phase 1: Self-healing scrapers (flagship) ✅ done 2026-11-05
 Goal: a scraper that survives layout changes.
 - [x] Lead schema + validity rules (`app/healing/schema.py`); design in ARCHITECTURE.md
 - [ ] Tier 1: platform primary parser (existing)
