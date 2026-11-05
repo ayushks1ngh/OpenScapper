@@ -26,3 +26,12 @@ exports/
 .claude/
 *.swp
 *.swo
+
+# packaging
+build/
+dist/
+*.egg-info/
+
+# local data
+.env
+prospects_*.csv
