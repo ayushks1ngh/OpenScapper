@@ -3,6 +3,7 @@
 Newest first. One entry per work session: what changed, what's next, blockers.
 
 ## 2026-11-05
+- Phase 1 core built and pushed: `app/healing/` (schema, cache, generic, induce, engine). 56 tests pass. Remaining in Phase 1: wire `heal()` into youtube/tiktok/pinterest/instagram, health screen in CLI.
 - Added `tests/test_enrichment.py` (20 tests; 31 total pass). Found and fixed a bug: WhatsApp `wa.me/` numbers were never extracted.
 - Decided API scrapers (github/twitch/linkedin) stay off `fetch()` (D-006). **Phase 0 complete** pending the GitHub repo rename.
 - **Next:** Phase 1, starting with the `Scraper` interface design. Pausing for user review of the design before building (large change).

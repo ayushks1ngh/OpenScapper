@@ -20,8 +20,8 @@ Goal: a scraper that survives layout changes.
 - [x] Lead schema + validity rules (`app/healing/schema.py`); design in ARCHITECTURE.md
 - [ ] Tier 1: platform primary parser (existing)
 - [x] Tier 2: generic structured data (JSON-LD / OpenGraph) (`generic.py`)
-- [ ] Tier 3: learned selectors applied from cache
-- [ ] Tier 4: LLM extraction fallback (`ai.py`) + `engine.py` orchestration
+- [x] Tier 3: learned selectors applied from cache
+- [x] Tier 4: LLM fallback + `heal()` orchestration (`engine.py`)
 - [x] Selector/stat cache (`app/healing/cache.py`, SQLite)
 - [x] Selector induction + replay: derive CSS selectors from known values (`induce.py`)
 - [ ] Health report: which scrapers healed, which tier served each lead
