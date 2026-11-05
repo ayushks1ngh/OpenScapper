@@ -41,7 +41,7 @@ if _args:
 
 from app import config  # noqa: E402
 
-config.load_dotenv(Path(__file__).parent / '.env')
+config.load_dotenv(config.env_path())
 
 from app.logsetup import setup_logging  # noqa: E402
 
@@ -138,7 +138,7 @@ Confirm.prompt_suffix = " "
 
 
 def _update_env(name, value):
-    config.update_env_file(Path(__file__).parent / '.env', name, value)
+    config.update_env_file(config.env_path(), name, value)
 
 
 def enrich_profiles(profiles):
@@ -1273,7 +1273,8 @@ def main():
             console.print(f"\n[red]✗ Error: {e}[/red]")
 
 
-if __name__ == '__main__':
+def cli():
+    """Entry point: `openscrapper`, `python openscrapper.py`."""
     if _args and _args[0].lower() == 'lead':
         if len(_args) < 2:
             print("Usage: python openscrapper.py lead <url>")
@@ -1300,3 +1301,7 @@ if __name__ == '__main__':
             sys.exit(2)
         sys.exit(0 if _run_find(' '.join(_rest), _limit, confirm=False) else 1)
     main()
+
+
+if __name__ == '__main__':
+    cli()

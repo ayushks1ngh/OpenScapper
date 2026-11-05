@@ -64,3 +64,10 @@ def test_update_env_file_migrates_legacy_key(tmp_path, monkeypatch):
 def test_home_respects_override(tmp_path, monkeypatch):
     monkeypatch.setenv('OPENSCRAPPER_HOME', str(tmp_path / 'h'))
     assert config.home() == tmp_path / 'h' and (tmp_path / 'h').is_dir()
+
+
+def test_env_path_override_and_checkout(tmp_path, monkeypatch):
+    monkeypatch.setenv('OPENSCRAPPER_ENV', str(tmp_path / 'custom.env'))
+    assert config.env_path() == tmp_path / 'custom.env'
+    monkeypatch.delenv('OPENSCRAPPER_ENV')
+    assert config.env_path().name == '.env'   # this repo is a git checkout, so it keeps its own .env

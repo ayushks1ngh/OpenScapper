@@ -62,6 +62,19 @@ def update_env_file(path: Path, name: str, value: str) -> None:
     os.environ.pop(legacy, None)
 
 
+def env_path() -> Path:
+    """Where .env lives. OPENSCRAPPER_ENV overrides; a source checkout keeps its own .env;
+    an installed copy uses ./.env if present, else ~/.openscrapper/.env."""
+    override = os.environ.get('OPENSCRAPPER_ENV')
+    if override:
+        return Path(override)
+    checkout = Path(__file__).resolve().parent.parent
+    if (checkout / '.git').exists() or (checkout / '.env').exists():
+        return checkout / '.env'
+    cwd_env = Path.cwd() / '.env'
+    return cwd_env if cwd_env.exists() else home() / '.env'
+
+
 def home() -> Path:
     p = Path(os.environ.get('OPENSCRAPPER_HOME') or Path.home() / '.openscrapper')
     p.mkdir(parents=True, exist_ok=True)
