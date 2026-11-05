@@ -443,6 +443,7 @@ def show_menu():
         ("9", "Bulk Scrape", "from file"),
         ("10", "Exports", "view files"),
         ("12", "Smart Scrape", "any URL (AI)"),
+        ("13", "Scraper Health", "self-healing"),
     ]
     tools_right = [
         ("11", "Settings", "config"),
@@ -1085,6 +1086,32 @@ def smart_scrape_interactive():
     console.print(json.dumps(result, indent=2, ensure_ascii=False))
 
 
+def scraper_health_interactive():
+    """Which extraction tier served each platform recently, and what has been learned."""
+    from app.healing.engine import get_cache
+    from app.healing.report import summarize
+
+    _platform_header("Scraper Health", "last 7 days")
+    cache = get_cache()
+    rows = summarize(cache.stats())
+    if not rows:
+        console.print("[dim]No runs recorded yet. Scrape something first.[/dim]")
+        return
+
+    colors = {'healthy': 'green', 'healing': 'yellow', 'broken': 'red', 'idle': 'dim'}
+    table = Table(box=None, padding=(0, 2), pad_edge=False)
+    for col in ("Platform", "Status", "Runs", "Own parser", "Healed", "Failed", "Learned selectors"):
+        table.add_column(col)
+    for r in rows:
+        learned = len(cache.selectors(r['platform']))
+        table.add_row(r['platform'], f"[{colors[r['status']]}]{r['status']}[/{colors[r['status']]}]",
+                      str(r['total']), f"{r['primary_rate']}%", str(r['healed']), str(r['failed']), str(learned))
+    console.print(table)
+    console.print()
+    console.print("[dim]healing = own parser failing, backup tiers serving leads. "
+                  "broken = nothing worked. Set SCOUT_LLM to let the LLM tier repair broken platforms.[/dim]")
+
+
 def main():
     _update_thread = _start_update_check()
     console.clear()
@@ -1111,7 +1138,7 @@ def main():
         try:
             choice = Prompt.ask(
                 f"[{ACCENT}]>[/{ACCENT}]",
-                choices=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+                choices=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
                 default="1",
                 show_choices=False
             )
@@ -1153,6 +1180,8 @@ def main():
                 settings_menu()
             elif choice == '12':
                 smart_scrape_interactive()
+            elif choice == '13':
+                scraper_health_interactive()
 
             _pause()
             console.clear()
