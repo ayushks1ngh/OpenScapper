@@ -29,10 +29,10 @@ Goal: a scraper that survives layout changes.
 **Exit:** break a selector on purpose; run still returns a correct lead and the cache is updated. Covered by a test using saved HTML fixtures.
 
 ## Phase 2: Any-URL leads
-- [ ] `scout lead <url>` returns a normalized lead for any page
-- [ ] Platform detection; generic extractor for unknown sites
-- [ ] Shared lead schema (name, company, role, emails, phones, socials, location, source)
-**Exit:** 10 varied non-platform URLs yield usable leads.
+- [x] `python openscrapper.py lead <url>` and menu 14 return a normalized lead for any page
+- [x] Platform detection (`app/lead/detect.py`); generic extractor for unknown sites (`app/lead/any_url.py`)
+- [x] Shared lead schema (added `phone`, `socials`). Company/role/location still TODO (LLM tier only)
+**Exit:** 10 varied non-platform URLs yield usable leads. (Needs a manual run against live sites; unit tests cover the logic with fixtures.)
 
 ## Phase 3: Natural-language prospecting
 - [ ] Query parser (LLM) -> search plan (platforms, keywords, filters)

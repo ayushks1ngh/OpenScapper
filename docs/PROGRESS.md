@@ -3,6 +3,7 @@
 Newest first. One entry per work session: what changed, what's next, blockers.
 
 ## 2026-11-05
+- Phase 2 built: `app/lead/` (detect, any_url), CLI `lead <url>` + menu 14, `phone` in schema. 92 tests. **Not yet verified against live sites** (no network checks run), so the Phase 2 exit criterion stays open.
 - **Phase 1 complete.** Scraper Health screen (menu 13). Exit criteria covered by `test_scraper_healing.py` (broken layout still yields a lead) and `test_healing_engine.py` (LLM once, then learned selectors, cache updated). 64 tests.
 - **Next:** Phase 2, any-URL leads (`lead <url>`, platform detection, generic extractor).
 - Wired `heal()` into youtube/tiktok/pinterest/instagram; primary results keep platform fields. 60 tests pass. Remaining in Phase 1: health report in the CLI, broken-selector exit test across platforms.
