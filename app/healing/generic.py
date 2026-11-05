@@ -11,6 +11,8 @@ _LD = re.compile(r'<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</s
                  re.DOTALL | re.IGNORECASE)
 _META = re.compile(r'<meta\b([^>]*)>', re.IGNORECASE)
 _ATTR = re.compile(r'([\w:-]+)\s*=\s*(?:"([^"]*)"|\'([^\']*)\')')
+_GENERIC_TITLES = {'instagram', 'tiktok', 'youtube', 'pinterest', 'twitch', 'linkedin', 'login',
+                   'log in', 'sign up', 'page not found', 'not found', 'access denied', 'just a moment...'}
 _PERSON_TYPES = {'person', 'organization', 'localbusiness', 'profilepage'}
 
 
@@ -70,6 +72,9 @@ def extract(page: str, platform: str = '', url: str = '') -> Dict[str, Any]:
 
     title = ent.get('name') or meta.get('og:title') or meta.get('twitter:title') or ''
     title = re.sub(r'\s*[\|\-–]\s*(YouTube|TikTok|Instagram|Pinterest|Twitch)\b.*$', '', str(title), flags=re.I)
+
+    if title.strip().lower() in _GENERIC_TITLES:
+        title = ''  # a site banner or login wall, not a person
 
     return normalize({
         'full_name': title,

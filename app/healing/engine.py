@@ -80,13 +80,16 @@ def heal(platform: str, url: str, html: str,
     result: Optional[HealResult] = None
 
     if primary:
+        raw = None
         try:
-            lead = normalize(primary(html), platform)
+            raw = primary(html)
+            lead = normalize(raw, platform)
         except Exception as e:
             logger.debug(f"{platform} primary parser raised {e!r}")
             lead = None
         if is_valid(lead):
-            result = HealResult(lead, 'primary')
+            # keep the platform's own dict: it carries extra fields (is_verified, following_count...)
+            result = HealResult(raw, 'primary')
         else:
             cache.record_run(platform, 'primary', False)
 
