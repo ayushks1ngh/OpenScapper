@@ -41,7 +41,7 @@ def test_escalates_on_block(reset):
 
 
 def test_escalates_on_challenge_page_with_200(reset):
-    calls = reset(http=lambda: (200, BLOCKED), stealth=lambda: (200, GOOD))
+    reset(http=lambda: (200, BLOCKED), stealth=lambda: (200, GOOD))
     assert F.fetch('https://example.com').engine == 'stealth'
 
 

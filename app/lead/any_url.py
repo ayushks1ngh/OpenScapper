@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, Optional
 
 from app.healing import generic
 from app.healing.engine import default_llm, heal
-from app.healing.schema import is_valid, normalize
+from app.healing.schema import is_valid
 from app.lead.detect import detect
 
 _HREF = re.compile(r'href=["\'](https?://[^"\'#\s]+)["\']', re.IGNORECASE)
