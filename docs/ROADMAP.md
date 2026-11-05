@@ -35,10 +35,10 @@ Goal: a scraper that survives layout changes.
 **Exit:** 10 varied non-platform URLs yield usable leads. (Needs a manual run against live sites; unit tests cover the logic with fixtures.)
 
 ## Phase 3: Natural-language prospecting
-- [ ] Query parser (LLM) -> search plan (platforms, keywords, filters)
-- [ ] Discovery step (search/list pages -> candidate profile URLs)
-- [ ] Pipeline: discover -> scrape -> enrich -> score -> export
-**Exit:** "yoga studio owners in Austin" returns a ranked CSV end to end.
+- [x] Query parser -> search plan (`app/prospect/query.py`, rule based; an LLM parser for messy phrasing is a later add-on)
+- [x] Discovery step (`app/prospect/discover.py`, search-engine HTML + `site:` filters)
+- [x] Pipeline: discover -> scrape -> enrich -> rank -> export (`pipeline.py`, CLI `find "<query>"`, menu 15)
+**Exit:** "yoga studio owners in Austin" returns a ranked CSV end to end. (Logic is unit tested with fakes; needs a live run on a networked machine. Search engines may rate-limit; discovery is pluggable.)
 
 ## Phase 4: Lead quality
 - [ ] Cross-platform identity matching (same person on multiple sites)

@@ -3,6 +3,8 @@
 Newest first. One entry per work session: what changed, what's next, blockers.
 
 ## 2026-11-05
+- Phase 3 built: `app/prospect/` (query, discover, pipeline), CLI `find "<query>" [--limit N]` and menu 15. 116 tests. **No live run yet** (sandbox has no network/browser), so the Phase 3 exit criterion stays open.
+- Fixed a thread race in pipeline stats (counters now locked).
 - Phase 2 built: `app/lead/` (detect, any_url), CLI `lead <url>` + menu 14, `phone` in schema. 92 tests. **Not yet verified against live sites** (no network checks run), so the Phase 2 exit criterion stays open.
 - **Phase 1 complete.** Scraper Health screen (menu 13). Exit criteria covered by `test_scraper_healing.py` (broken layout still yields a lead) and `test_healing_engine.py` (LLM once, then learned selectors, cache updated). 64 tests.
 - **Next:** Phase 2, any-URL leads (`lead <url>`, platform detection, generic extractor).
