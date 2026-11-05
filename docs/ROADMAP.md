@@ -24,7 +24,7 @@ Goal: a scraper that survives layout changes.
 - [x] Tier 4: LLM fallback + `heal()` orchestration (`engine.py`)
 - [x] Selector/stat cache (`app/healing/cache.py`, SQLite)
 - [x] Selector induction + replay: derive CSS selectors from known values (`induce.py`)
-- [ ] Health report: which scrapers healed, which tier served each lead
+- [x] Health report: which scrapers healed, which tier served each lead (menu 13, `report.py`)
 - [x] Convert Instagram, TikTok, Pinterest, YouTube first (the flakiest)
 **Exit:** break a selector on purpose; run still returns a correct lead and the cache is updated. Covered by a test using saved HTML fixtures.
 
