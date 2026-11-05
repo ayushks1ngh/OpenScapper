@@ -11,11 +11,14 @@ from typing import Any, Callable, Dict, List, Optional
 from app.lead.detect import Detected
 from app.prospect.discover import discover as _discover
 from app.prospect.query import SearchPlan
+from app.quality import scoring
+from app.quality.merge import dedupe
 
 logger = logging.getLogger(__name__)
 
-CSV_FIELDS = ['lead_score', 'platform', 'username', 'full_name', 'email', 'email_verified', 'phone',
-              'follower_count', 'website', 'bio', 'profile_url', 'followers_unknown']
+CSV_FIELDS = ['quality_score', 'score_explain', 'platform', 'platforms', 'username', 'full_name', 'email',
+              'email_verified', 'phone', 'follower_count', 'total_reach', 'website', 'bio', 'profile_url',
+              'followers_unknown', 'lead_score']
 
 
 def _default_scrape(d: Detected) -> Optional[Dict[str, Any]]:
@@ -41,8 +44,8 @@ def in_range(lead: Dict[str, Any], plan: SearchPlan) -> bool:
 
 
 def rank(leads: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    return sorted(leads, key=lambda l: (-(l.get('lead_score') or 0), -(l.get('follower_count') or 0),
-                                        l.get('username') or ''))
+    return sorted(leads, key=lambda l: (-(l.get('quality_score', l.get('lead_score')) or 0),
+                                        -(l.get('follower_count') or 0), l.get('username') or ''))
 
 
 def run(plan: SearchPlan, per_platform: int = 10, workers: int = 3,
@@ -53,7 +56,8 @@ def run(plan: SearchPlan, per_platform: int = 10, workers: int = 3,
     """Returns {'leads': ranked list, 'stats': {...}}. Individual failures never abort the run."""
     found = discover_fn(plan, per_platform=per_platform)
     candidates = [d for ds in found.values() for d in ds]
-    stats = {'discovered': len(candidates), 'scraped': 0, 'enriched': 0, 'filtered_out': 0, 'failed': 0}
+    stats = {'discovered': len(candidates), 'scraped': 0, 'enriched': 0, 'filtered_out': 0, 'failed': 0,
+             'merged': 0}
     if on_progress:
         on_progress('discovered', 0, len(candidates))
 
@@ -94,7 +98,9 @@ def run(plan: SearchPlan, per_platform: int = 10, workers: int = 3,
             if on_progress:
                 on_progress('scraping', i, len(candidates))
 
-    return {'leads': rank(leads), 'stats': stats}
+    unique = dedupe(leads)
+    stats['merged'] = len(leads) - len(unique)
+    return {'leads': rank([scoring.apply(l) for l in unique]), 'stats': stats}
 
 
 def export_csv(leads: List[Dict[str, Any]], path: Optional[str] = None) -> str:
@@ -103,5 +109,7 @@ def export_csv(leads: List[Dict[str, Any]], path: Optional[str] = None) -> str:
         w = csv.DictWriter(f, fieldnames=CSV_FIELDS, extrasaction='ignore')
         w.writeheader()
         for lead in leads:
-            w.writerow(lead)
+            row = dict(lead)
+            row['platforms'] = ', '.join(lead.get('platforms') or [])
+            w.writerow(row)
     return str(path)

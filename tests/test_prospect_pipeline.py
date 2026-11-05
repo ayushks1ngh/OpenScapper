@@ -38,7 +38,8 @@ def test_full_run_filters_ranks_and_counts():
                        scrape_fn=scrape, enrich_fn=enrich)
     users = [l['username'] for l in out['leads']]
     assert users == ['e', 'a', 'c']  # score desc, then followers desc; b filtered, d failed
-    assert out['stats'] == {'discovered': 5, 'scraped': 4, 'enriched': 3, 'filtered_out': 1, 'failed': 1}
+    assert out['stats'] == {'discovered': 5, 'scraped': 4, 'enriched': 3, 'filtered_out': 1, 'failed': 1,
+                          'merged': 0}
     c = next(l for l in out['leads'] if l['username'] == 'c')
     assert c['followers_unknown'] is True
 
@@ -70,3 +71,27 @@ def test_export_csv(tmp_path):
     assert rows[0]['username'] == 'a' and rows[0]['lead_score'] == '50'
     assert rows[0]['email_verified'] == 'True'
     assert 'junk' not in rows[0]
+
+
+def test_same_person_on_two_platforms_is_merged_and_scored():
+    def d_fn(plan, per_platform=10):
+        return {'instagram': [det('janedoe')], 'youtube': [det('janedoe', 'youtube')]}
+
+    pool = {('instagram', 'janedoe'): {'platform': 'instagram', 'username': 'janedoe', 'full_name': 'Jane Doe',
+                                       'follower_count': 8000, 'bio': 'Founder'},
+            ('youtube', 'janedoe'): {'platform': 'youtube', 'username': 'janedoe', 'full_name': 'Jane Doe',
+                                     'follower_count': 20000, 'email': 'jane@janedoe.com'}}
+    out = pipeline.run(SearchPlan(), discover_fn=d_fn, scrape_fn=lambda d: dict(pool[(d.platform, d.identifier)]),
+                       enrich_fn=lambda l: l)
+    assert len(out['leads']) == 1 and out['stats']['merged'] == 1
+    lead = out['leads'][0]
+    assert lead['platforms'] == ['instagram', 'youtube'] and lead['total_reach'] == 28000
+    assert lead['quality_score'] > 0 and 'Presence +5' in lead['score_explain']
+
+
+def test_csv_includes_score_columns(tmp_path):
+    p = pipeline.export_csv([{'username': 'a', 'quality_score': 61, 'score_explain': 'Phone +15 (x)',
+                              'platforms': ['instagram', 'youtube']}], str(tmp_path / 'o.csv'))
+    row = next(csv.DictReader(open(p, encoding='utf-8')))
+    assert row['quality_score'] == '61' and row['platforms'] == 'instagram, youtube'
+    assert row['score_explain'].startswith('Phone')
