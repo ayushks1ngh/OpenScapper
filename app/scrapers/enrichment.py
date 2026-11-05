@@ -9,6 +9,8 @@ from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import httpx
+from app.scrapers.fetch import fetch
+from app.scrapers.ai import ai_enabled, ai_enrich_website
 
 from app.scrapers.stealth import random_user_agent, random_delay
 
@@ -194,13 +196,9 @@ class LeadEnricher:
 
     def _fetch_page(self, url: str) -> Optional[str]:
         try:
-            if not url.startswith('http'):
-                url = 'https://' + url
-            resp = httpx.get(url, timeout=10, headers={
-                'User-Agent': random_user_agent()
-            }, follow_redirects=True)
-            if resp.status_code == 200:
-                return resp.text
+            res = fetch(url, timeout=15)
+            if res and res.ok:
+                return res.text
         except Exception as e:
             logger.debug(f"Error fetching {url}: {e}")
         return None
@@ -242,6 +240,15 @@ class LeadEnricher:
                 break
 
             random_delay(0.3, 0.8)
+
+        # Regex found nothing: let the LLM read the site (only if SCOUT_LLM is set)
+        if not result['email'] and ai_enabled():
+            ai = ai_enrich_website(website)
+            if ai.get('email') and self._is_valid_email(ai['email']):
+                result['email'] = ai['email']
+                all_emails.append(ai['email'])
+            if not result['phone'] and ai.get('phone'):
+                result['phone'] = ai['phone']
 
         result['all_emails'] = list(set(all_emails))
         return result

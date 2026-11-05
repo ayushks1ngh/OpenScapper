@@ -11,6 +11,7 @@ Features:
 """
 
 import requests
+from app.scrapers.fetch import get as fetch_get
 from typing import Dict, Optional
 import logging
 import re
@@ -45,7 +46,7 @@ def scrape_channel(channel_identifier: str) -> Optional[Dict]:
     }
 
     try:
-        r = requests.get(url, headers=headers, cookies=cookies, timeout=20, proxies=get_requests_proxies())
+        r = fetch_get(url, headers=headers, cookies=cookies, timeout=20)
 
         if r.status_code == 404:
             logger.error(f"YouTube channel {channel_identifier} not found")
@@ -61,7 +62,7 @@ def scrape_channel(channel_identifier: str) -> Optional[Dict]:
             return result
 
         headers['User-Agent'] = random_user_agent()
-        r = requests.get(url, headers=headers, cookies=cookies, timeout=20, proxies=get_requests_proxies())
+        r = fetch_get(url, headers=headers, cookies=cookies, timeout=20)
         if r.status_code == 200:
             return _extract_channel_data(r.text, channel_identifier)
         return None

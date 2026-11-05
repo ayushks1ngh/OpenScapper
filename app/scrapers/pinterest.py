@@ -11,6 +11,7 @@ Features:
 """
 
 import requests
+from app.scrapers.fetch import get as fetch_get
 from typing import Dict, Optional
 import logging
 import re
@@ -40,7 +41,7 @@ def scrape_profile(username: str) -> Optional[Dict]:
     }
 
     try:
-        r = requests.get(url, headers=headers, timeout=20, proxies=get_requests_proxies())
+        r = fetch_get(url, headers=headers, timeout=20)
 
         if r.status_code == 404:
             logger.error(f"Pinterest user {username} not found")

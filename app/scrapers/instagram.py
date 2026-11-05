@@ -16,7 +16,7 @@ from typing import Dict, Optional
 import logging
 import re
 
-from app.scrapers.stealth import get_requests_proxies
+from app.scrapers.fetch import fetch
 from app.scrapers.utils import extract_email, extract_phone, parse_abbreviated_number
 
 logger = logging.getLogger(__name__)
@@ -51,8 +51,6 @@ def scrape_profile_no_login(username: str, max_retries: int = 3) -> Optional[Dic
     url = f'https://www.instagram.com/{username}/'
 
     for attempt in range(max_retries):
-        proxies = get_requests_proxies()
-
         headers = {
             'User-Agent': random.choice(MOBILE_USER_AGENTS),
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -60,16 +58,18 @@ def scrape_profile_no_login(username: str, max_retries: int = 3) -> Optional[Dic
         }
 
         try:
-            r = requests.get(url, headers=headers, proxies=proxies, timeout=20)
+            r = fetch(url, headers=headers, timeout=20)
+            if r is None:
+                raise requests.exceptions.Timeout()
 
-            if r.status_code == 404:
+            if r.status == 404:
                 return None
 
-            if r.status_code == 429:
+            if r.status == 429:
                 raise RuntimeError("Rate limited by Instagram (429). Wait a few minutes before scraping again.")
 
-            if r.status_code != 200:
-                logger.debug(f"HTTP {r.status_code} for @{username}, attempt {attempt + 1}/{max_retries}")
+            if r.status != 200:
+                logger.debug(f"HTTP {r.status} for @{username}, attempt {attempt + 1}/{max_retries}")
                 if attempt < max_retries - 1:
                     time.sleep(1)
                     continue

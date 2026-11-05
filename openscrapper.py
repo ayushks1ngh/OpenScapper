@@ -26,12 +26,12 @@ _args = [a for a in sys.argv[1:] if a not in ('--verbose', '-V')]
 if _args:
     arg = _args[0].lower()
     if arg in ('--version', '-v', 'version'):
-        print(f"Scout v{__version__}")
+        print(f"OpenScrapper v{__version__}")
         sys.exit(0)
     elif arg in ('--help', '-h', 'help'):
-        print(f"Scout v{__version__} - Social media lead generation tool")
+        print(f"OpenScrapper v{__version__} - Social media lead generation tool")
         print()
-        print("Usage: python scout.py [options]")
+        print("Usage: python openscrapper.py [options]")
         print()
         print("Options:")
         print("  --version, -v    Show version")
@@ -94,7 +94,7 @@ def _check_for_updates():
     try:
         import requests as _req
         resp = _req.get(
-            "https://api.github.com/repos/kiryano/Scout/releases/latest",
+            "https://api.github.com/repos/ayushks1ngh/OpenScapper/releases/latest",
             headers={"Accept": "application/vnd.github.v3+json"},
             timeout=3,
         )
@@ -393,7 +393,7 @@ def show_header():
     else:
         proxy_str = "[dim]○ off[/dim]"
 
-    status = f"[dim]github.com/kiryano/Scout[/dim]  ·  [dim]Proxy:[/dim] {proxy_str}"
+    status = f"[dim]github.com/ayushks1ngh/OpenScapper[/dim]  ·  [dim]Proxy:[/dim] {proxy_str}"
     if _session_stats["scraped"] > 0:
         status += f"  ·  [dim]Scraped:[/dim] [white]{_session_stats['scraped']}[/white]"
     console.print(status, justify="center")
@@ -442,6 +442,7 @@ def show_menu():
     tools_left = [
         ("9", "Bulk Scrape", "from file"),
         ("10", "Exports", "view files"),
+        ("12", "Smart Scrape", "any URL (AI)"),
     ]
     tools_right = [
         ("11", "Settings", "config"),
@@ -594,7 +595,7 @@ def scrape_linkedin_interactive():
         console.print("  [white]2.[/white] F12 > Application > Cookies > linkedin.com")
         console.print("  [white]3.[/white] Copy the value of [bold]li_at[/bold]")
         console.print("  [white]4.[/white] Add to .env: [bold]LINKEDIN_COOKIE=your_value[/bold]")
-        console.print("  [white]5.[/white] Restart Scout")
+        console.print("  [white]5.[/white] Restart OpenScrapper")
         console.print()
         return
 
@@ -876,7 +877,7 @@ def scrape_from_file():
 
 
 def settings_menu():
-    _platform_header("Settings", "Configure Scout")
+    _platform_header("Settings", "Configure OpenScrapper")
 
     ps = proxy_status()
     current_proxy = os.environ.get('SCOUT_PROXY', '')
@@ -1057,6 +1058,33 @@ def view_exports():
     console.print()
 
 
+def smart_scrape_interactive():
+    """Scrape any URL: Scrapling fetches it, the configured LLM extracts the data."""
+    from app.scrapers.ai import ai_enabled, ai_extract, llm_name, CONTACT_PROMPT
+    from app.scrapers.fetch import fetch, engine_mode
+
+    _platform_header("Smart Scrape", f"engine: {engine_mode()}  |  LLM: {llm_name() or 'off'}")
+    if not ai_enabled():
+        console.print("[yellow]No LLM configured.[/yellow] Set [bold]SCOUT_LLM[/bold] in .env, e.g.")
+        console.print("  [dim]SCOUT_LLM=ollama/llama3.2[/dim]  (local, free)")
+        console.print("  [dim]SCOUT_LLM=openai/gpt-4o-mini[/dim] + [dim]SCOUT_LLM_KEY=...[/dim]")
+        return
+
+    url = Prompt.ask(f"[{ACCENT}]URL[/{ACCENT}]").strip()
+    if not url:
+        return
+    prompt = Prompt.ask(f"[{ACCENT}]What to extract[/{ACCENT}]", default="contact details")
+    prompt = CONTACT_PROMPT if prompt == "contact details" else prompt
+
+    with console.status("Fetching and extracting..."):
+        result = ai_extract(url, prompt)
+    if not result:
+        console.print("[red]✗ Nothing extracted (blocked page, LLM unreachable, or empty result).[/red]")
+        return
+    import json
+    console.print(json.dumps(result, indent=2, ensure_ascii=False))
+
+
 def main():
     _update_thread = _start_update_check()
     console.clear()
@@ -1067,9 +1095,9 @@ def main():
     if latest:
         console.print()
         console.print(Panel(
-            f"[bold white]Scout v{latest} is available.[/bold white]\n"
+            f"[bold white]OpenScrapper v{latest} is available.[/bold white]\n"
             f"[dim]You are running v{__version__}. Please update before continuing.[/dim]\n\n"
-            f"[{ACCENT}]git pull origin main[/{ACCENT}]  [dim]or visit[/dim]  [{ACCENT}]github.com/kiryano/Scout[/{ACCENT}]",
+            f"[{ACCENT}]git pull origin main[/{ACCENT}]  [dim]or visit[/dim]  [{ACCENT}]github.com/ayushks1ngh/OpenScapper[/{ACCENT}]",
             border_style=ACCENT,
             title="[bold white]Update Required[/bold white]",
             padding=(1, 3),
@@ -1083,7 +1111,7 @@ def main():
         try:
             choice = Prompt.ask(
                 f"[{ACCENT}]>[/{ACCENT}]",
-                choices=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],
+                choices=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
                 default="1",
                 show_choices=False
             )
@@ -1093,8 +1121,8 @@ def main():
                 console.print()
                 console.print(Rule(style=ACCENT_DIM))
                 console.print(
-                    f"  [bold {ACCENT}]Thanks for using Scout[/bold {ACCENT}]  "
-                    "[dim]★ github.com/kiryano/Scout[/dim]"
+                    f"  [bold {ACCENT}]Thanks for using OpenScrapper[/bold {ACCENT}]  "
+                    "[dim]★ github.com/ayushks1ngh/OpenScapper[/dim]"
                 )
                 console.print()
                 break
@@ -1123,6 +1151,8 @@ def main():
                 view_exports()
             elif choice == '11':
                 settings_menu()
+            elif choice == '12':
+                smart_scrape_interactive()
 
             _pause()
             console.clear()

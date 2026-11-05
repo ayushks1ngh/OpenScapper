@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Dict, Optional
 
 import httpx
+from app.scrapers.fetch import get as fetch_get
 
 from app.scrapers.stealth import random_user_agent, get_httpx_proxy
 from app.scrapers.utils import extract_email
@@ -42,14 +43,12 @@ def scrape_tiktok_profile(username: str) -> Optional[Dict]:
     logger.info(f"Scraping TikTok profile: {url}")
 
     try:
-        client = _get_client()
-        resp = client.get(url, headers=_build_headers())
-        resp.raise_for_status()
-    except httpx.HTTPStatusError as e:
-        logger.error(f"HTTP error for @{username}: {e.response.status_code}")
-        return None
-    except httpx.RequestError as e:
+        resp = fetch_get(url, headers=_build_headers())
+    except Exception as e:
         logger.error(f"Request error for @{username}: {e}")
+        return None
+    if resp.status != 200:
+        logger.error(f"HTTP error for @{username}: {resp.status}")
         return None
 
     html = resp.text

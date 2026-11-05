@@ -1,20 +1,20 @@
-# Scout
+# OpenScrapper
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Discord](https://img.shields.io/discord/1467620600267931713?color=7289da&label=Discord&logo=discord&logoColor=white)](https://discord.gg/eneDNUbzcc)
 
-> **Early access** — Scout is a CLI tool right now. A full web app with dashboard, CRM, and team features is in development. Looking for testers and feedback. Join the [Discord](https://discord.gg/eneDNUbzcc) or open an issue.
+> **Early access** — OpenScrapper is a CLI tool right now. A full web app with dashboard, CRM, and team features is in development. Looking for testers and feedback. Join the [Discord](https://discord.gg/eneDNUbzcc) or open an issue.
 
 Lead generation tool for appointment setters. Scrapes profiles from 8 platforms, enriches them with verified emails using SMTP verification and company domain detection, and exports to CSV.
 
-![Scout CLI](screenshot.png)
+![OpenScrapper CLI](screenshot.png)
 
 ## Install
 
 ```bash
-git clone https://github.com/kiryano/Scout.git
-cd Scout
+git clone https://github.com/ayushks1ngh/OpenScapper.git
+cd OpenScapper
 pip install -r requirements.txt
 cp .env.example .env
 ```
@@ -22,10 +22,10 @@ cp .env.example .env
 ## Usage
 
 ```bash
-python scout.py
-python scout.py --verbose   # enable debug logging
-python scout.py --version
-python scout.py --help
+python openscrapper.py
+python openscrapper.py --verbose   # enable debug logging
+python openscrapper.py --version
+python openscrapper.py --help
 ```
 
 Interactive CLI for scraping profiles, enriching leads with contact info, and exporting to CSV.
@@ -87,7 +87,7 @@ Proxies are optional. All scrapers work without them. Twitch automatically falls
 
 ## How Enrichment Works
 
-After scraping, Scout enriches leads with verified email addresses:
+After scraping, OpenScrapper enriches leads with verified email addresses:
 
 1. Extracts email/phone from bio text
 2. Scrapes the lead's website, /contact, and /about pages
@@ -113,6 +113,16 @@ No paid API required. Optional Hunter.io support for additional coverage.
 
 [Discord](https://discord.gg/eneDNUbzcc)
 
+## Credits
+
+- Originally forked from [kiryano/Scout](https://github.com/kiryano/Scout) (MIT). The original copyright notice is kept in `LICENSE`.
+- Fetching and anti-bot handling: [Scrapling](https://github.com/D4Vinci/Scrapling) by D4Vinci.
+- Optional AI-based extraction: [ScrapeGraphAI](https://github.com/ScrapeGraphAI/Scrapegraph-ai).
+
+## Project plan
+
+Roadmap, architecture and decision log live in [`docs/`](docs/README.md).
+
 ## License
 
-MIT
+MIT. See `LICENSE`.

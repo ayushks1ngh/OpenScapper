@@ -16,6 +16,7 @@ Features:
 """
 
 import requests
+from app.scrapers.fetch import get as fetch_get
 from typing import Dict, Optional, List
 import logging
 import re
@@ -86,7 +87,7 @@ def _scrape_profile(username: str, platform: str) -> Optional[Dict]:
     }
 
     try:
-        r = requests.get(url, headers=headers, timeout=20)
+        r = fetch_get(url, headers=headers, timeout=20)
 
         if r.status_code == 404:
             logger.debug(f"{platform} user {username} not found")
