@@ -33,3 +33,26 @@ Principles:
 ## Open design questions
 - Where the selector cache lives (SQLite vs JSON) -> D-003
 - How discovery finds candidates without official search APIs -> Phase 3
+
+## Phase 1 design: self-healing extraction (`app/healing/`)
+
+Each platform keeps its existing parser (tier 1). When it returns nothing or an invalid lead, `heal()` walks the ladder and stops at the first valid result:
+
+| Tier | Source | Cost |
+|---|---|---|
+| 1 `primary` | the platform's own parser (regex / embedded JSON) | free |
+| 2 `generic` | structured data on the page: JSON-LD, OpenGraph, `<meta>` | free |
+| 3 `learned` | CSS selectors previously learned for this platform (SQLite) | free |
+| 4 `llm` | ScrapeGraphAI extraction (`ai.py`), only if `SCOUT_LLM` is set | paid/slow |
+
+Learning: when tier 4 succeeds, `induce` locates each returned value in the DOM and derives a CSS selector for it. Selectors are stored per `(platform, field)` and become tier 3 on the next run, so the LLM is paid for once per layout change, not once per lead.
+
+Modules:
+- `schema.py`: `Lead` fields, `normalize()`, `is_valid()`
+- `cache.py`: SQLite store (selectors + per-run tier stats), default `~/.openscrapper/healing.db` (override `OPENSCRAPPER_HOME`)
+- `generic.py`: tier 2 extractors (stdlib only)
+- `induce.py`: value -> CSS selector
+- `engine.py`: `heal()` orchestration and stats
+- CLI: a "Scraper health" screen showing which tier served each platform recently
+
+Validity rule: a lead is valid if it has a username or full name, `follower_count` is a non-negative int, and any email is well formed.

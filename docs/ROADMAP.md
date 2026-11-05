@@ -17,11 +17,13 @@ Goal: clean base, honest attribution, tests to build on.
 
 ## Phase 1: Self-healing scrapers (flagship)
 Goal: a scraper that survives layout changes.
-- [ ] Define a `Scraper` interface: `selectors`, `schema`, `parse(page)`
-- [ ] Tier 1: CSS selectors (fast path)
-- [ ] Tier 2: Scrapling adaptive relocation when selectors miss
-- [ ] Tier 3: LLM extraction fallback (`ai.py`)
-- [ ] Selector cache: persist LLM-found fixes, reuse next run
+- [x] Lead schema + validity rules (`app/healing/schema.py`); design in ARCHITECTURE.md
+- [ ] Tier 1: platform primary parser (existing)
+- [ ] Tier 2: generic structured data (JSON-LD / OpenGraph) (`generic.py`)
+- [ ] Tier 3: learned selectors applied from cache
+- [ ] Tier 4: LLM extraction fallback (`ai.py`) + `engine.py` orchestration
+- [x] Selector/stat cache (`app/healing/cache.py`, SQLite)
+- [ ] Selector induction: derive CSS selectors from LLM output (`induce.py`)
 - [ ] Health report: which scrapers healed, which tier served each lead
 - [ ] Convert Instagram, TikTok, Pinterest, YouTube first (the flakiest)
 **Exit:** break a selector on purpose; run still returns a correct lead and the cache is updated. Covered by a test using saved HTML fixtures.
