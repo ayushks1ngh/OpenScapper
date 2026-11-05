@@ -1136,20 +1136,22 @@ def _run_find(query: str, limit: int, confirm: bool = True):
 
     leads, st = out['leads'], out['stats']
     console.print(f"[dim]{st['discovered']} found · {st['scraped']} scraped · {st['filtered_out']} outside "
-                  f"follower range · {st['failed']} failed[/dim]")
+                  f"follower range · {st['merged']} duplicates merged · {st['failed']} failed[/dim]")
     if not leads:
         console.print("[yellow]No leads. The search engine may be blocking requests; try again later "
                       "or loosen the query.[/yellow]")
         return None
     table = Table(box=None, padding=(0, 2), pad_edge=False)
-    for col in ("Score", "Platform", "Name", "Followers", "Email"):
+    for col in ("Score", "Platforms", "Name", "Followers", "Email"):
         table.add_column(col)
     for l in leads[:15]:
-        table.add_row(str(l.get('lead_score', 0)), l.get('platform', ''),
+        table.add_row(str(l.get('quality_score', l.get('lead_score', 0))),
+                      ', '.join(l.get('platforms') or [l.get('platform', '')]),
                       (l.get('full_name') or l.get('username') or '')[:28],
-                      f"{l.get('follower_count', 0):,}" + ("?" if l.get('followers_unknown') else ""),
+                      f"{l.get('total_reach', l.get('follower_count', 0)):,}" + ("?" if l.get('followers_unknown') else ""),
                       l.get('email', '') or "-")
     console.print(table)
+    console.print("[dim]Score reasons are in the score_explain column of the CSV.[/dim]")
     path = export_csv(leads)
     console.print(f"\n[{ACCENT}]✓[/{ACCENT}] {len(leads)} leads saved to [bold]{path}[/bold]")
     return path
