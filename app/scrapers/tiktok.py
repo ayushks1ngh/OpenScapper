@@ -6,6 +6,7 @@ from typing import Dict, Optional
 
 import httpx
 from app.scrapers.fetch import get as fetch_get
+from app.healing.engine import heal
 
 from app.scrapers.stealth import random_user_agent, get_httpx_proxy
 from app.scrapers.utils import extract_email
@@ -53,6 +54,19 @@ def scrape_tiktok_profile(username: str) -> Optional[Dict]:
 
     html = resp.text
 
+    profile = heal('tiktok', url, html,
+                   primary=lambda h: _parse_profile(h, username, url)).lead
+    if profile:
+        logger.info(
+            f"Scraped @{username}: {profile.get('full_name', '')} | "
+            f"{profile.get('follower_count', 0)} followers"
+        )
+    return profile
+
+
+def _parse_profile(html: str, username: str, url: str) -> Optional[Dict]:
+    """TikTok's embedded rehydration JSON (primary parser)."""
+
     match = re.search(
         r'<script\s+id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>(.*?)</script>',
         html,
@@ -92,10 +106,5 @@ def scrape_tiktok_profile(username: str) -> Optional[Dict]:
         'likes_count': stats.get('heartCount', 0),
         'video_count': stats.get('videoCount', 0),
     }
-
-    logger.info(
-        f"Scraped @{username}: {profile['full_name']} | "
-        f"{profile['follower_count']} followers | {profile['likes_count']} likes"
-    )
 
     return profile

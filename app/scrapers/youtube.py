@@ -12,6 +12,7 @@ Features:
 
 import requests
 from app.scrapers.fetch import get as fetch_get
+from app.healing.engine import heal
 from typing import Dict, Optional
 import logging
 import re
@@ -57,7 +58,8 @@ def scrape_channel(channel_identifier: str) -> Optional[Dict]:
             return None
 
         html = r.text
-        result = _extract_channel_data(html, channel_identifier)
+        result = heal('youtube', url, html,
+                      primary=lambda h: _extract_channel_data(h, channel_identifier)).lead
         if result:
             return result
 

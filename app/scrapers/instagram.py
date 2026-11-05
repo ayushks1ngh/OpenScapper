@@ -17,6 +17,7 @@ import logging
 import re
 
 from app.scrapers.fetch import fetch
+from app.healing.engine import heal
 from app.scrapers.utils import extract_email, extract_phone, parse_abbreviated_number
 
 logger = logging.getLogger(__name__)
@@ -83,7 +84,8 @@ def scrape_profile_no_login(username: str, max_retries: int = 3) -> Optional[Dic
             if '/accounts/login' in r.url or ('login' in html[:5000].lower() and 'password' in html[:5000].lower()):
                 return None
 
-            data = _extract_profile_from_html(html, username)
+            data = heal('instagram', url, html,
+                        primary=lambda h: _extract_profile_from_html(h, username)).lead
 
             if data:
                 return data

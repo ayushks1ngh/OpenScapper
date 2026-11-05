@@ -12,6 +12,7 @@ Features:
 
 import requests
 from app.scrapers.fetch import get as fetch_get
+from app.healing.engine import heal
 from typing import Dict, Optional
 import logging
 import re
@@ -57,7 +58,8 @@ def scrape_profile(username: str) -> Optional[Dict]:
             logger.error(f"Pinterest user {username} not found")
             return None
 
-        return _extract_profile_data(html, username)
+        return heal('pinterest', url, html,
+                    primary=lambda h: _extract_profile_data(h, username)).lead
 
     except requests.exceptions.Timeout:
         logger.error(f"Timeout fetching Pinterest profile {username}")
