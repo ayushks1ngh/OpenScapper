@@ -18,6 +18,15 @@ jobs:
       # Tests mock the network and browsers, so the heavy scrapling/scrapegraphai deps are skipped.
       - run: pip install pytest requests httpx dnspython free-proxy rich scrapling
       - run: python -m pytest -q
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install .
+      - run: cd /tmp && openscrapper --version
   lint:
     runs-on: ubuntu-latest
     steps:
