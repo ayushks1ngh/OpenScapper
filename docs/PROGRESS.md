@@ -3,6 +3,7 @@
 Newest first. One entry per work session: what changed, what's next, blockers.
 
 ## 2026-11-05
+- Wired `heal()` into youtube/tiktok/pinterest/instagram; primary results keep platform fields. 60 tests pass. Remaining in Phase 1: health report in the CLI, broken-selector exit test across platforms.
 - Phase 1 core built and pushed: `app/healing/` (schema, cache, generic, induce, engine). 56 tests pass. Remaining in Phase 1: wire `heal()` into youtube/tiktok/pinterest/instagram, health screen in CLI.
 - Added `tests/test_enrichment.py` (20 tests; 31 total pass). Found and fixed a bug: WhatsApp `wa.me/` numbers were never extracted.
 - Decided API scrapers (github/twitch/linkedin) stay off `fetch()` (D-006). **Phase 0 complete** pending the GitHub repo rename.
