@@ -32,6 +32,7 @@ if _args:
         print(f"OpenScrapper v{__version__} - Social media lead generation tool")
         print()
         print("Usage: python openscrapper.py [options]")
+        print("       python openscrapper.py lead <url>   Print a lead (JSON) for any profile or page")
         print()
         print("Options:")
         print("  --version, -v    Show version")
@@ -444,6 +445,7 @@ def show_menu():
         ("10", "Exports", "view files"),
         ("12", "Smart Scrape", "any URL (AI)"),
         ("13", "Scraper Health", "self-healing"),
+        ("14", "Lead from URL", "any page"),
     ]
     tools_right = [
         ("11", "Settings", "config"),
@@ -1086,6 +1088,30 @@ def smart_scrape_interactive():
     console.print(json.dumps(result, indent=2, ensure_ascii=False))
 
 
+def _lead_json(url: str):
+    import json
+    from app.lead.any_url import lead_from_url
+    res = lead_from_url(url)
+    if not res.lead:
+        return None, res
+    return json.dumps(res.lead, indent=2, ensure_ascii=False), res
+
+
+def lead_from_url_interactive():
+    """Paste any profile or page URL and get a normalized lead."""
+    _platform_header("Lead from URL", "profile links use the platform scraper, other pages use generic extraction")
+    url = Prompt.ask(f"[{ACCENT}]URL[/{ACCENT}]").strip()
+    if not url:
+        return
+    with console.status("Fetching..."):
+        out, res = _lead_json(url)
+    if not out:
+        console.print("[red]✗ No lead found (blocked page, nothing person-like on it, or not found).[/red]")
+        return
+    console.print(f"[dim]source: {res.source}  |  tier: {res.tier}[/dim]")
+    console.print(out)
+
+
 def scraper_health_interactive():
     """Which extraction tier served each platform recently, and what has been learned."""
     from app.healing.engine import get_cache
@@ -1138,7 +1164,7 @@ def main():
         try:
             choice = Prompt.ask(
                 f"[{ACCENT}]>[/{ACCENT}]",
-                choices=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+                choices=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14"],
                 default="1",
                 show_choices=False
             )
@@ -1182,6 +1208,8 @@ def main():
                 smart_scrape_interactive()
             elif choice == '13':
                 scraper_health_interactive()
+            elif choice == '14':
+                lead_from_url_interactive()
 
             _pause()
             console.clear()
@@ -1198,4 +1226,14 @@ def main():
 
 
 if __name__ == '__main__':
+    if _args and _args[0].lower() == 'lead':
+        if len(_args) < 2:
+            print("Usage: python openscrapper.py lead <url>")
+            sys.exit(2)
+        _out, _res = _lead_json(_args[1])
+        if not _out:
+            print("No lead found.", file=sys.stderr)
+            sys.exit(1)
+        print(_out)
+        sys.exit(0)
     main()
