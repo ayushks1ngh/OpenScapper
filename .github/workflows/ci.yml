@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       # Tests mock the network and browsers, so the heavy scrapling/scrapegraphai deps are skipped.
-      - run: pip install pytest requests httpx dnspython free-proxy rich
+      - run: pip install pytest requests httpx dnspython free-proxy rich scrapling
       - run: python -m pytest -q
   lint:
     runs-on: ubuntu-latest
