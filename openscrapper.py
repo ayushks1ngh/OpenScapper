@@ -33,6 +33,7 @@ if _args:
         print()
         print("Usage: python openscrapper.py [options]")
         print("       python openscrapper.py lead <url>   Print a lead (JSON) for any profile or page")
+        print('       python openscrapper.py find "<query>" [--limit N]   Describe the leads you want')
         print()
         print("Options:")
         print("  --version, -v    Show version")
@@ -446,6 +447,7 @@ def show_menu():
         ("12", "Smart Scrape", "any URL (AI)"),
         ("13", "Scraper Health", "self-healing"),
         ("14", "Lead from URL", "any page"),
+        ("15", "Find Leads", "describe them"),
     ]
     tools_right = [
         ("11", "Settings", "config"),
@@ -1097,6 +1099,70 @@ def _lead_json(url: str):
     return json.dumps(res.lead, indent=2, ensure_ascii=False), res
 
 
+def _show_plan(plan):
+    rng = ""
+    if plan.min_followers is not None or plan.max_followers is not None:
+        lo = f"{plan.min_followers:,}" if plan.min_followers is not None else "0"
+        hi = f"{plan.max_followers:,}" if plan.max_followers is not None else "any"
+        rng = f"{lo} to {hi}"
+    console.print(f"  [dim]looking for[/dim]  {plan.terms or '(anything)'}")
+    console.print(f"  [dim]location   [/dim]  {plan.location or 'any'}")
+    console.print(f"  [dim]platforms  [/dim]  {', '.join(plan.platforms)}")
+    console.print(f"  [dim]followers  [/dim]  {rng or 'any'}")
+    console.print()
+
+
+def _run_find(query: str, limit: int, confirm: bool = True):
+    from app.prospect.pipeline import export_csv, run
+    from app.prospect.query import parse_query
+
+    plan = parse_query(query)
+    if not plan.terms and not plan.location:
+        console.print("[red]✗ Describe who you want, e.g. \"yoga studio owners in Austin with 5k+ followers\".[/red]")
+        return None
+    _show_plan(plan)
+    if confirm and not Confirm.ask(f"[{ACCENT}]Search with this plan?[/{ACCENT}]", default=True):
+        return None
+
+    with Progress(SpinnerColumn(), TextColumn("{task.description}"), BarColumn(), MofNCompleteColumn(),
+                  console=console, transient=True) as prog:
+        task = prog.add_task("Finding profiles...", total=None)
+
+        def on_progress(stage, i, n):
+            prog.update(task, description="Scraping and enriching..." if stage == 'scraping' else
+                        "Found candidates", total=n, completed=i)
+
+        out = run(plan, per_platform=limit, on_progress=on_progress)
+
+    leads, st = out['leads'], out['stats']
+    console.print(f"[dim]{st['discovered']} found · {st['scraped']} scraped · {st['filtered_out']} outside "
+                  f"follower range · {st['failed']} failed[/dim]")
+    if not leads:
+        console.print("[yellow]No leads. The search engine may be blocking requests; try again later "
+                      "or loosen the query.[/yellow]")
+        return None
+    table = Table(box=None, padding=(0, 2), pad_edge=False)
+    for col in ("Score", "Platform", "Name", "Followers", "Email"):
+        table.add_column(col)
+    for l in leads[:15]:
+        table.add_row(str(l.get('lead_score', 0)), l.get('platform', ''),
+                      (l.get('full_name') or l.get('username') or '')[:28],
+                      f"{l.get('follower_count', 0):,}" + ("?" if l.get('followers_unknown') else ""),
+                      l.get('email', '') or "-")
+    console.print(table)
+    path = export_csv(leads)
+    console.print(f"\n[{ACCENT}]✓[/{ACCENT}] {len(leads)} leads saved to [bold]{path}[/bold]")
+    return path
+
+
+def find_leads_interactive():
+    """Describe the leads you want in plain English."""
+    _platform_header("Find Leads", "e.g. yoga studio owners in Austin with 5k+ followers on instagram")
+    query = Prompt.ask(f"[{ACCENT}]Who are you looking for?[/{ACCENT}]").strip()
+    if query:
+        _run_find(query, limit=10)
+
+
 def lead_from_url_interactive():
     """Paste any profile or page URL and get a normalized lead."""
     _platform_header("Lead from URL", "profile links use the platform scraper, other pages use generic extraction")
@@ -1164,7 +1230,7 @@ def main():
         try:
             choice = Prompt.ask(
                 f"[{ACCENT}]>[/{ACCENT}]",
-                choices=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14"],
+                choices=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"],
                 default="1",
                 show_choices=False
             )
@@ -1210,6 +1276,8 @@ def main():
                 scraper_health_interactive()
             elif choice == '14':
                 lead_from_url_interactive()
+            elif choice == '15':
+                find_leads_interactive()
 
             _pause()
             console.clear()
@@ -1236,4 +1304,19 @@ if __name__ == '__main__':
             sys.exit(1)
         print(_out)
         sys.exit(0)
+    if _args and _args[0].lower() == 'find':
+        _rest = _args[1:]
+        _limit = 10
+        if '--limit' in _rest:
+            _i = _rest.index('--limit')
+            try:
+                _limit = max(1, int(_rest[_i + 1]))
+            except (IndexError, ValueError):
+                print("--limit needs a number")
+                sys.exit(2)
+            del _rest[_i:_i + 2]
+        if not _rest:
+            print('Usage: python openscrapper.py find "<query>" [--limit N]')
+            sys.exit(2)
+        sys.exit(0 if _run_find(' '.join(_rest), _limit, confirm=False) else 1)
     main()
