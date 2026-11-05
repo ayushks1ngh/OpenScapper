@@ -3,6 +3,7 @@
 Newest first. One entry per work session: what changed, what's next, blockers.
 
 ## 2026-11-05
+- Added `tests/test_fetch.py` (11 passing) and GitHub Actions CI (pytest on 3.10/3.12, ruff syntax-error lint).
 - Name decided: OpenScrapper (D-001). Renamed entry point, banner, README, update checker. LICENSE keeps original Scout notice plus ours.
 - Created branch `phase-0-foundation`, committed Phase 0 work.
 - **Next:** pytest + tests for `fetch()` escalation, then CI, then migrate github/linkedin/twitch onto `fetch()`.
