@@ -3,6 +3,8 @@
 Newest first. One entry per work session: what changed, what's next, blockers.
 
 ## 2026-11-05
+- Logging (rotating file, redaction), packaging (`pip install .` verified in a clean venv, `openscrapper` command, `.env` resolved to the checkout or `~/.openscrapper`), CLI moved into `cli()`. 165 tests.
+- **Open decision for the owner:** `app.__version__` is still `1.3.1` (inherited from Scout). The roadmap said v1.0; releasing 1.0.0 would look like a downgrade and the update checker compares against GitHub releases. Suggest 2.0.0 for the first OpenScrapper release.
 - Phase 5 started: config layer (new env names, legacy fallback), per-host throttle + retry/backoff in `fetch()`. 158 tests. Remaining: structured logging, packaging (pyproject + entry point), install docs, v1.0 tag (needs your OK).
 - **Phase 4 complete.** Identity matching, merge, explainable scoring, wired into `find`. Eval on 30 hand-written pairs: precision 1.00, recall 0.86 (two misses are accepted weak-evidence cases). 146 tests.
 - **Next:** Phase 5 (config, rate limiting, logging, packaging, release).

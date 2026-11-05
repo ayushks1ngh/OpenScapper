@@ -12,6 +12,19 @@ Lead generation tool for appointment setters. Scrapes profiles from 8 platforms,
 
 ## Install
 
+From PyPI-style packaging (works from a checkout today):
+
+```
+pip install .                 # core
+pip install ".[browser]"      # + real-browser fetch tiers for Cloudflare-style blocks
+pip install ".[ai]"           # + LLM extraction fallback
+openscrapper                  # interactive menu
+openscrapper find "yoga studio owners in Austin with 5k+ followers on instagram"
+openscrapper lead https://example.com/about
+```
+
+Or run from source:
+
 ```bash
 git clone https://github.com/ayushks1ngh/OpenScapper.git
 cd OpenScapper

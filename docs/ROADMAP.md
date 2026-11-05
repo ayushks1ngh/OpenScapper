@@ -50,8 +50,8 @@ Goal: a scraper that survives layout changes.
 ## Phase 5: Production hardening
 - [x] Config system (`app/config.py`: OPENSCRAPPER_* with SCOUT_* fallback, `.env` loader/writer) (D-005 done)
 - [x] Rate limiting + retries (`app/ratelimit.py`: per-host throttle, jittered backoff on 429/5xx). Proxy rotation unchanged (random pick per request)
-- [ ] Structured logging and error reporting
-- [ ] Packaging (pip install, entry point), versioned releases
+- [x] Logging: rotating file at `~/.openscrapper/logs/`, JSON lines option (`OPENSCRAPPER_LOG_JSON`), secrets redacted (`app/logsetup.py`)
+- [x] Packaging: `pyproject.toml`, `openscrapper` console script, extras `browser`/`ai`/`dev`; verified in a clean venv. Versioned releases: pending your decision on the version number (see PROGRESS)
 - [ ] Docs site / usage guide
 **Exit:** fresh machine install to first CSV in under 5 minutes; tagged v1.0.
 
