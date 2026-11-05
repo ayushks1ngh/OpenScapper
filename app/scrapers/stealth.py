@@ -5,6 +5,7 @@ import logging
 import requests
 from typing import Optional, Callable
 from functools import wraps
+from app.config import env, flag
 
 logger = logging.getLogger(__name__)
 
@@ -65,18 +66,18 @@ def _fetch_free_proxies() -> list:
 
 
 def get_proxy() -> Optional[str]:
-    proxy = os.environ.get('SCOUT_PROXY')
+    proxy = env('PROXY')
     if proxy:
         return proxy
 
-    proxy_file = os.environ.get('SCOUT_PROXY_FILE')
+    proxy_file = env('PROXY_FILE')
     if proxy_file and os.path.exists(proxy_file):
         with open(proxy_file, 'r') as f:
             proxies = [line.strip() for line in f if line.strip() and not line.startswith('#')]
         if proxies:
             return random.choice(proxies)
 
-    if os.environ.get('SCOUT_FREE_PROXY', '').lower() in ('1', 'true', 'yes'):
+    if flag('FREE_PROXY'):
         free_proxies = _fetch_free_proxies()
         if free_proxies:
             return random.choice(free_proxies)
@@ -103,11 +104,11 @@ def get_requests_proxies() -> Optional[dict]:
 
 
 def proxy_status() -> str:
-    if os.environ.get('SCOUT_PROXY'):
+    if env('PROXY'):
         return 'custom'
-    if os.environ.get('SCOUT_PROXY_FILE'):
+    if env('PROXY_FILE'):
         return 'file'
-    if os.environ.get('SCOUT_FREE_PROXY', '').lower() in ('1', 'true', 'yes'):
+    if flag('FREE_PROXY'):
         return 'free'
     return 'none'
 

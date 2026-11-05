@@ -74,13 +74,13 @@ LINKEDIN_COOKIE=your_li_at_cookie_value
 
 ```
 # Single proxy
-SCOUT_PROXY=http://user:pass@host:port
+OPENSCRAPPER_PROXY=http://user:pass@host:port
 
 # Rotating proxies from file (one per line)
-SCOUT_PROXY_FILE=proxies.txt
+OPENSCRAPPER_PROXY_FILE=proxies.txt
 
 # Free anonymous proxies (no config needed)
-SCOUT_FREE_PROXY=true
+OPENSCRAPPER_FREE_PROXY=true
 ```
 
 Proxies are optional. All scrapers work without them. Twitch automatically falls back to a direct connection if the proxy fails.

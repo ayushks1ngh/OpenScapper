@@ -8,7 +8,7 @@ back clean:
     stealth  Scrapling StealthyFetcher   real browser, anti-bot/Cloudflare handling
     browser  plain Playwright       fallback when the stealth browser can't launch
 
-Choose with SCOUT_ENGINE (or the `mode=` argument):
+Choose with OPENSCRAPPER_ENGINE (legacy SCOUT_ENGINE also works) (or the `mode=` argument):
     auto (default) | http | stealth | browser | legacy
 
 `legacy` uses plain httpx (the old behaviour). Tiers that fail to start are
@@ -17,10 +17,10 @@ request. Every result exposes `.page`, a Scrapling Selector, for CSS/XPath.
 """
 
 import logging
-import os
 from dataclasses import dataclass
 from typing import Optional
 
+from app.config import env
 from app.scrapers.stealth import get_httpx_proxy, random_user_agent
 
 logger = logging.getLogger(__name__)
@@ -125,7 +125,7 @@ _RUNNERS = {'http': _http, 'stealth': _stealth, 'browser': _browser, 'legacy': _
 
 
 def engine_mode() -> str:
-    mode = os.environ.get('SCOUT_ENGINE', 'auto').strip().lower()
+    mode = env('ENGINE', 'auto').strip().lower()
     return mode if mode in ('auto', *TIERS, 'legacy') else 'auto'
 
 

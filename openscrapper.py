@@ -43,14 +43,9 @@ if _args:
         print("Run without arguments to start the interactive menu.")
         sys.exit(0)
 
-env_file = Path(__file__).parent / '.env'
-if env_file.exists():
-    with open(env_file) as _f:
-        for _line in _f:
-            _line = _line.strip()
-            if _line and not _line.startswith('#') and '=' in _line:
-                _key, _, _val = _line.partition('=')
-                os.environ.setdefault(_key.strip(), _val.strip())
+from app import config  # noqa: E402
+
+config.load_dotenv(Path(__file__).parent / '.env')
 
 from rich.console import Console
 from rich.panel import Panel
@@ -142,23 +137,8 @@ Prompt.prompt_suffix = " "
 Confirm.prompt_suffix = " "
 
 
-def _update_env(key, value):
-    env_path = Path(__file__).parent / '.env'
-    lines = []
-    found = False
-    if env_path.exists():
-        with open(env_path) as f:
-            for line in f:
-                if line.strip().startswith(key + '='):
-                    lines.append(f'{key}={value}\n')
-                    found = True
-                else:
-                    lines.append(line)
-    if not found:
-        lines.append(f'{key}={value}\n')
-    with open(env_path, 'w') as f:
-        f.writelines(lines)
-    os.environ[key] = value
+def _update_env(name, value):
+    config.update_env_file(Path(__file__).parent / '.env', name, value)
 
 
 def enrich_profiles(profiles):
@@ -476,8 +456,8 @@ def show_menu():
 def _get_delay_range(fallback=(1.0, 2.5)):
     """Get configured delay range from env vars, with fallback."""
     try:
-        d_min = float(os.environ.get('SCOUT_DELAY_MIN', str(fallback[0])))
-        d_max = float(os.environ.get('SCOUT_DELAY_MAX', str(fallback[1])))
+        d_min = config.number('DELAY_MIN', fallback[0])
+        d_max = config.number('DELAY_MAX', fallback[1])
         return (d_min, d_max) if d_max >= d_min >= 0 else fallback
     except ValueError:
         return fallback
@@ -885,11 +865,11 @@ def settings_menu():
     _platform_header("Settings", "Configure OpenScrapper")
 
     ps = proxy_status()
-    current_proxy = os.environ.get('SCOUT_PROXY', '')
-    free_enabled = os.environ.get('SCOUT_FREE_PROXY', '').lower() in ('1', 'true', 'yes')
-    proxy_file = os.environ.get('SCOUT_PROXY_FILE', '')
-    delay_min = os.environ.get('SCOUT_DELAY_MIN', '1.0')
-    delay_max = os.environ.get('SCOUT_DELAY_MAX', '2.5')
+    current_proxy = config.env('PROXY')
+    free_enabled = config.flag('FREE_PROXY')
+    proxy_file = config.env('PROXY_FILE')
+    delay_min = config.env('DELAY_MIN', '1.0')
+    delay_max = config.env('DELAY_MAX', '2.5')
     li_cookie = os.environ.get('LINKEDIN_COOKIE', '').strip()
 
     proxy_str = f"[green]{ps}[/green]" if ps != 'none' else "[red]off[/red]"
@@ -933,24 +913,24 @@ def settings_menu():
     if choice == '1':
         url = Prompt.ask("[>] Proxy URL (e.g. http://user:pass@host:port)")
         if url.strip():
-            _update_env('SCOUT_PROXY', url.strip())
+            _update_env('PROXY', url.strip())
             console.print(f"[green]✓ Proxy set[/green]")
 
     elif choice == '2':
         filepath = Prompt.ask("[>] Path to proxy list file")
         if filepath.strip():
             if os.path.exists(filepath.strip()):
-                _update_env('SCOUT_PROXY_FILE', filepath.strip())
+                _update_env('PROXY_FILE', filepath.strip())
                 console.print(f"[green]✓ Proxy file set[/green]")
             else:
                 console.print(f"[red]✗ File not found: {filepath.strip()}[/red]")
 
     elif choice == '3':
         if free_enabled:
-            _update_env('SCOUT_FREE_PROXY', 'false')
+            _update_env('FREE_PROXY', 'false')
             console.print("[yellow]✓ Free proxy disabled[/yellow]")
         else:
-            _update_env('SCOUT_FREE_PROXY', 'true')
+            _update_env('FREE_PROXY', 'true')
             console.print("[green]✓ Free proxy enabled[/green]")
 
     elif choice == '4':
@@ -992,11 +972,9 @@ def settings_menu():
                         console.print("[red]All free proxies failed. Use a paid proxy.[/red]")
 
     elif choice == '5':
-        _update_env('SCOUT_PROXY', '')
-        _update_env('SCOUT_FREE_PROXY', 'false')
-        _update_env('SCOUT_PROXY_FILE', '')
-        os.environ.pop('SCOUT_PROXY', None)
-        os.environ.pop('SCOUT_PROXY_FILE', None)
+        _update_env('PROXY', '')
+        _update_env('FREE_PROXY', 'false')
+        _update_env('PROXY_FILE', '')
         console.print("[yellow]✓ Proxy removed[/yellow]")
 
     elif choice == '6':
@@ -1008,8 +986,8 @@ def settings_menu():
             if fmin < 0 or fmax < fmin:
                 console.print("[red]✗ Invalid range[/red]")
             else:
-                _update_env('SCOUT_DELAY_MIN', str(fmin))
-                _update_env('SCOUT_DELAY_MAX', str(fmax))
+                _update_env('DELAY_MIN', str(fmin))
+                _update_env('DELAY_MAX', str(fmax))
                 console.print(f"[green]✓ Delay set to {fmin}s - {fmax}s[/green]")
         except ValueError:
             console.print("[red]✗ Must be numbers[/red]")
@@ -1070,9 +1048,9 @@ def smart_scrape_interactive():
 
     _platform_header("Smart Scrape", f"engine: {engine_mode()}  |  LLM: {llm_name() or 'off'}")
     if not ai_enabled():
-        console.print("[yellow]No LLM configured.[/yellow] Set [bold]SCOUT_LLM[/bold] in .env, e.g.")
-        console.print("  [dim]SCOUT_LLM=ollama/llama3.2[/dim]  (local, free)")
-        console.print("  [dim]SCOUT_LLM=openai/gpt-4o-mini[/dim] + [dim]SCOUT_LLM_KEY=...[/dim]")
+        console.print("[yellow]No LLM configured.[/yellow] Set [bold]OPENSCRAPPER_LLM[/bold] in .env, e.g.")
+        console.print("  [dim]OPENSCRAPPER_LLM=ollama/llama3.2[/dim]  (local, free)")
+        console.print("  [dim]OPENSCRAPPER_LLM=openai/gpt-4o-mini[/dim] + [dim]OPENSCRAPPER_LLM_KEY=...[/dim]")
         return
 
     url = Prompt.ask(f"[{ACCENT}]URL[/{ACCENT}]").strip()
@@ -1203,7 +1181,7 @@ def scraper_health_interactive():
     console.print(table)
     console.print()
     console.print("[dim]healing = own parser failing, backup tiers serving leads. "
-                  "broken = nothing worked. Set SCOUT_LLM to let the LLM tier repair broken platforms.[/dim]")
+                  "broken = nothing worked. Set OPENSCRAPPER_LLM to let the LLM tier repair broken platforms.[/dim]")
 
 
 def main():

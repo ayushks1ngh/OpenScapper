@@ -19,6 +19,7 @@ import os
 import tempfile
 from typing import Dict, Optional
 
+from app.config import env
 from app.scrapers.fetch import fetch
 
 logger = logging.getLogger(__name__)
@@ -32,7 +33,7 @@ CONTACT_PROMPT = (
 
 
 def llm_name() -> str:
-    return os.environ.get('SCOUT_LLM', '').strip()
+    return env('LLM').strip()
 
 
 def ai_enabled() -> bool:
@@ -42,8 +43,8 @@ def ai_enabled() -> bool:
 def _config() -> Dict:
     model = llm_name()
     llm = {'model': model, 'temperature': 0}
-    key = os.environ.get('SCOUT_LLM_KEY', '').strip()
-    url = os.environ.get('SCOUT_LLM_URL', '').strip()
+    key = env('LLM_KEY').strip()
+    url = env('LLM_URL').strip()
     if key:
         llm['api_key'] = key
     if url:

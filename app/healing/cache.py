@@ -1,17 +1,11 @@
 """SQLite store for learned selectors and per-run tier stats."""
 
-import os
 import sqlite3
 import threading
 import time
-from pathlib import Path
 from typing import Dict, List, Optional
 
-
-def home() -> Path:
-    p = Path(os.environ.get('OPENSCRAPPER_HOME') or Path.home() / '.openscrapper')
-    p.mkdir(parents=True, exist_ok=True)
-    return p
+from app.config import home
 
 
 _SCHEMA = """
