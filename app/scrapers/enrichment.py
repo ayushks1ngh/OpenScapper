@@ -169,7 +169,7 @@ class LeadEnricher:
             if 10 <= len(clean) <= 15:
                 return tel.strip()
 
-        wa_links = re.findall(r'(?:wa\.me|api\.whatsapp\.com/send\?phone=)(\d+)', text)
+        wa_links = re.findall(r'(?:wa\.me/|api\.whatsapp\.com/send\?phone=)(\d+)', text)
         for num in wa_links:
             if 10 <= len(num) <= 15:
                 return '+' + num

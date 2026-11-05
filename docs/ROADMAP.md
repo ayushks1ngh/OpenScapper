@@ -10,10 +10,10 @@ Goal: clean base, honest attribution, tests to build on.
 - [x] Commit the current uncommitted work on a feature branch (`phase-0-foundation`)
 - [x] Pick name and rename (banner, README, update checker, entry point -> `openscrapper.py`) (D-001)
 - [x] Add pytest + tests for fetch tier escalation (`tests/test_fetch.py`, 11 tests)
-- [ ] Tests for enrichment (email pattern/scoring)
+- [x] Tests for enrichment (`tests/test_enrichment.py`; found and fixed a WhatsApp-link regex bug)
 - [x] CI (lint + tests) in `.github/workflows/ci.yml`
-- [ ] Migrate remaining scrapers (github, linkedin, twitch) onto `fetch()`
-**Exit:** all 8 platforms fetch via `fetch()`; tests green in CI; no references to the old name/update URL.
+- [x] HTML scrapers on `fetch()` (instagram, tiktok, pinterest, youtube, linktree). github/twitch/linkedin stay on their API clients (D-006)
+**Exit:** all HTML-based platforms fetch via `fetch()`; tests green in CI; no references to the old name/update URL.
 
 ## Phase 1: Self-healing scrapers (flagship)
 Goal: a scraper that survives layout changes.
