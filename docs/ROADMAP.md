@@ -48,8 +48,8 @@ Goal: a scraper that survives layout changes.
 **Exit:** measured precision on a hand-labelled sample set. Met on a 30-pair set: precision 1.00, recall 0.86 (`tests/test_quality_identity_eval.py`). Caveat: pairs were written by us, so this guards regressions but is not real-world accuracy; grow the set from real runs.
 
 ## Phase 5: Production hardening
-- [ ] Config system (single settings file, env overrides)
-- [ ] Rate limiting, retries, proxy rotation policy
+- [x] Config system (`app/config.py`: OPENSCRAPPER_* with SCOUT_* fallback, `.env` loader/writer) (D-005 done)
+- [x] Rate limiting + retries (`app/ratelimit.py`: per-host throttle, jittered backoff on 429/5xx). Proxy rotation unchanged (random pick per request)
 - [ ] Structured logging and error reporting
 - [ ] Packaging (pip install, entry point), versioned releases
 - [ ] Docs site / usage guide

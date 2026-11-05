@@ -29,5 +29,5 @@ Format: ID, date, status, decision, why, alternatives.
 - Revisit if a POST/session mode is added to `fetch()` (likely needed for Phase 1 healing of linkedin).
 
 ## D-005: Env var prefix (2026-11-05)
-- Status: open
-- Keep `SCOUT_*` for now. Later: accept `OPENSCRAPPER_*` first, fall back to `SCOUT_*`, deprecate in v1.0.
+- Status: accepted and implemented
+- `OPENSCRAPPER_*` wins, `SCOUT_*` still read as a fallback. Settings screen writes the new names and removes the legacy line. Plan to drop the fallback in v2.
