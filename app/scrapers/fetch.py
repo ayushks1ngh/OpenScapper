@@ -20,12 +20,16 @@ import logging
 from dataclasses import dataclass
 from typing import Optional
 
-from app.config import env
+from urllib.parse import urlparse
+
+from app import ratelimit
+from app.config import env, number
 from app.scrapers.stealth import get_httpx_proxy, random_user_agent
 
 logger = logging.getLogger(__name__)
 
 TIERS = ('http', 'stealth', 'browser')
+RETRY_STATUSES = {429, 500, 502, 503, 504}
 _disabled = set()
 
 BLOCK_STATUSES = {401, 403, 429, 503}
@@ -129,6 +133,26 @@ def engine_mode() -> str:
     return mode if mode in ('auto', *TIERS, 'legacy') else 'auto'
 
 
+_throttle = ratelimit.HostThrottle()
+
+
+def _run_tier(tier, url, timeout, headers):
+    """One tier, politely: wait for the host, retry rate-limit/server errors with backoff."""
+    _throttle.min_interval = number('HOST_DELAY', 0.3)
+    retries = int(number('RETRIES', 2))
+    host = urlparse(url).hostname or ''
+    attempt = 0
+    while True:
+        _throttle.wait(host)
+        status, text = _RUNNERS[tier](url, timeout, headers)
+        if status not in RETRY_STATUSES or attempt >= retries:
+            return status, text
+        attempt += 1
+        delay = ratelimit.backoff_delay(attempt)
+        logger.debug(f"{tier} got HTTP {status} from {host}; retry {attempt}/{retries} in {delay:.1f}s")
+        ratelimit.sleep(delay)
+
+
 def fetch(url: str, mode: Optional[str] = None, timeout: int = 20,
           headers: Optional[dict] = None, min_tier: Optional[str] = None) -> Optional[FetchResult]:
     """Fetch `url`, escalating tiers in auto mode. Returns None if nothing worked.
@@ -152,7 +176,7 @@ def fetch(url: str, mode: Optional[str] = None, timeout: int = 20,
         if tier in _disabled:
             continue
         try:
-            status, text = _RUNNERS[tier](url, timeout, headers)
+            status, text = _run_tier(tier, url, timeout, headers)
         except ImportError as e:
             logger.debug(f"{tier} tier unavailable ({e}); disabling")
             _disabled.add(tier)
