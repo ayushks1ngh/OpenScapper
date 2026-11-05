@@ -17,10 +17,6 @@ sys.path.insert(0, str(Path(__file__).parent))
 from app import __version__
 
 _verbose = '--verbose' in sys.argv or '-V' in sys.argv
-logging.basicConfig(
-    level=logging.DEBUG if _verbose else logging.WARNING,
-    format='%(name)s: %(message)s',
-)
 
 _args = [a for a in sys.argv[1:] if a not in ('--verbose', '-V')]
 if _args:
@@ -38,7 +34,7 @@ if _args:
         print("Options:")
         print("  --version, -v    Show version")
         print("  --help, -h       Show this help")
-        print("  --verbose, -V    Enable debug logging")
+        print("  --verbose, -V    Enable debug logging (console and log file)")
         print()
         print("Run without arguments to start the interactive menu.")
         sys.exit(0)
@@ -46,6 +42,10 @@ if _args:
 from app import config  # noqa: E402
 
 config.load_dotenv(Path(__file__).parent / '.env')
+
+from app.logsetup import setup_logging  # noqa: E402
+
+LOG_FILE = setup_logging(verbose=_verbose)
 
 from rich.console import Console
 from rich.panel import Panel
